@@ -98,14 +98,15 @@ export class Governing extends SmartContract {
   }
 
   // Send funds to government
-  public govCollect(to: Address, amount: Fixed<0>): boolean {
-    const account = this.grants.get(address);
-    if (Address.isCaller(address) && account !== undefined) {
+  public govCollect(from: Address, amount: Fixed<0>): boolean {
+    const account = this.grants.get(from);
+    if (Address.isCaller(from) && account !== undefined) {
       if (account.balance < amount) {
         throw new Error(`There isn't enough balance in the account.`);
       }
       
-      const confirmation = token.transfer(this.address, address, amount);
+      // Check necessity!
+      const confirmation = token.transfer(from, this.address, amount);
       if (confirmation) {
         this.grants.set(address, { ...account, balance = account.balance - amount });
       }
