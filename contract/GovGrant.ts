@@ -84,7 +84,7 @@ export class GovGrant extends SmartContract {
     this.donations.set(address, { message: '', balance: 0, currentBalance: 0});
   }
 
-  //Goverment collects the token based on the public transport far the citizen redeems.
+  // Government collects the token based on the public transport far the citizen redeems.
   public collect(address: Address, _amount: Fixed<0>): boolean {
     const account = this.donations.get(address);
     if (account.balance < _amount) {
