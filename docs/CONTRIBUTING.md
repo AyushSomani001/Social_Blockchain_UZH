@@ -3,4 +3,7 @@
 > Assignment: **Final Project** <br>
 > Author: **Ayush Somani** <br>
 > Group 4: **Oliver Müller, Frederik Glitzner, Kharitonova Nadezhda, Martin Zbudila, Ayush Somani** <br>
-> Date: July 24,2020
+> Date: July 24,2020 <br>
+
+> GitHub: https://github.com/*   <br>
+> - Access Public  
