@@ -33,12 +33,6 @@ interface TokenPayableContract {
 }
 
 export class Token extends SmartContract {
-  public readonly properties = {
-    codeVersion: '1.0',
-    author: 'dicarlo2',
-    email: 'alex.dicarlo@neotracker.io',
-    description: 'NEO•ONE ICO',
-  };
   public readonly name = 'One';
   public readonly symbol = 'ONE';
   public readonly decimals = 8;
