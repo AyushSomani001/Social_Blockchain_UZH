@@ -13,12 +13,6 @@ import { Token } from './Token';
 
 const token = LinkedSmartContract.for<Token>();
 
-//TODO Not needed
-interface ContributionInfo extends SerializableValueObject {
-  readonly amount: Fixed<8>;
-  readonly message: string;
-}
-
 //TODO Grant info without current Balance
 interface DonationInfo extends SerializableValueObject {
   readonly message: string;
@@ -27,7 +21,6 @@ interface DonationInfo extends SerializableValueObject {
 }
 
 export class GovGrant extends SmartContract {
-  private readonly contributions = MapStorage.for<[Address /*receiver*/, Address /*contributor*/], ContributionInfo>();
   private readonly donations = MapStorage.for<Address /*receiver*/, DonationInfo>();
 
   public constructor(public readonly owner: Address = Deploy.senderAddress) {
@@ -47,27 +40,17 @@ export class GovGrant extends SmartContract {
       : info;
   }
 
-  // Donation Contributor Getter
-  @constant
-  public getContributionInfo(source: Address, contributor: Address): ContributionInfo {
-    const info = this.contributions.get([source, contributor]);
-
-    return info === undefined ? { amount: -1, message: '' } : info;
-  }
-
   // One interface functions
   public approveReceiveTransfer(
-    from: Address,
     amount: Fixed<8>,
     asset: Address,
     to: ForwardedValue<Address>,
-    message: ForwardedValue<string>,
   ): boolean {
     if (!Address.isCaller(asset)) {
       return false;
     }
 
-    return this.contribute(from, to, amount, message);
+    return this.contribute(to, amount);
   }
 
   public onRevokeSendTransfer(_from: Address, _amount: Fixed<0>, _asset: Address) {
@@ -87,10 +70,11 @@ export class GovGrant extends SmartContract {
   // Government collects the token based on the public transport far the citizen redeems.
   public collect(address: Address, _amount: Fixed<0>): boolean {
     const account = this.donations.get(address);
-    if (account.balance < _amount) {
-      throw new Error(`There isn't enough balance in the account.`);
-    }
     if (Address.isCaller(address) && account !== undefined) {
+      if (account.balance < _amount) {
+        throw new Error(`There isn't enough balance in the account.`);
+      }
+      
       const confirmation = token.transfer(this.address, address, _amount);
       if (confirmation) {
         this.donations.set(address, { ...account, currentBalance: account.currentBalance - _amount });
@@ -113,34 +97,18 @@ export class GovGrant extends SmartContract {
     return false;
   }
 
-  public updateContributorMessage(source: Address, contributor: Address, message: string): boolean {
-    const account = this.contributions.get([source, contributor]);
-    if (account !== undefined && Address.isCaller(contributor)) {
-      this.contributions.set([source, contributor], { amount: account.amount, message });
-
-      return true;
-    }
-
-    return false;
-  }
-
-  private contribute(from: Address, to: Address, amount: Fixed<8>, messageIn: string): boolean {
+  private contribute(to: Address, amount: Fixed<8>): boolean {
     const balances = this.donations.get(to);
 
     if (balances === undefined) {
       throw new Error(`That address hasn't been setup to receive contributions yet.`);
     }
 
-    const contributor = this.contributions.get([to, from]);
-    const message = messageIn === '' ? (contributor === undefined ? '' : contributor.message) : messageIn;
-    const contribBalance = contributor === undefined ? amount : contributor.amount + amount;
-
     this.donations.set(to, {
       message: balances.message,
       balance: balances.balance + amount,
       currentBalance: balances.currentBalance + amount,
     });
-    this.contributions.set([to, from], { amount: contribBalance, message });
 
     return true;
   }
