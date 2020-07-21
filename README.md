@@ -1,5 +1,5 @@
 # Incentivised Social Media Platform
-### University UZH - Universität Zürich
+### University UZH - Universität Zürich, Switzerland
 
 [Contribution guidelines for this project](docs/CONTRIBUTING.md)
 > Subject: **"Deep Dive into Blockchain"** <br>
