@@ -2,12 +2,12 @@
 ### University UZH - Universität Zürich, Switzerland
 
 [Contribution guidelines for this project](docs/CONTRIBUTING.md)
-> Subject: **"Deep Dive into Blockchain"** <br>
-> Professor **Prof. Claudio Tessone** <br>
-> Assignment: **Final Project** <br>
-> Author: **Ayush Somani** <br>
-> Group 4: **Oliver Müller, Frederik Glitzner, Kharitonova Nadezhda, Martin Zbudila, Ayush Somani** <br>
-> Date: July 24,2020  <br>
+> Subject: &nbsp;  &emsp; &emsp; **"Deep Dive into Blockchain"** <br>
+> Professor:&emsp; &emsp; **Prof. Claudio Tessone** <br>
+> Assignment: &emsp; **Final Project** <br>
+> Author: &nbsp; &nbsp; &emsp; &emsp;**Ayush Somani** <br>
+> Group 4: &ensp; &ensp; &emsp; **Oliver Müller, Frederik Glitzner, Kharitonova Nadezhda, Martin Zbudila, Ayush Somani** <br>
+> Date: &ensp; &ensp; &emsp; &emsp; &nbsp;July 24,2020  <br>
 
 
 <b> Developing an Incentivised Social Media Platform with NEO Dapp using TypeScript</b> <br>
