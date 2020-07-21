@@ -7,7 +7,7 @@
 > Assignment: &emsp; **Final Project** <br>
 > Author: &nbsp; &nbsp; &emsp; &emsp;**Ayush Somani, Frederik Glitzner** <br>
 > Group 4: &ensp; &ensp; &emsp; **Oliver Müller, Frederik Glitzner, Kharitonova Nadezhda, Martin Zbudila, Ayush Somani** <br>
-> Date: &ensp; &ensp; &emsp; &emsp; &nbsp;July 24,2020  <br>
+> Date: &ensp; &ensp; &emsp; &emsp; &nbsp;July 22,2020  <br>
 
 
 <b> Developing an Incentivised Social Media Platform with NEO Dapp using TypeScript</b> <br>
