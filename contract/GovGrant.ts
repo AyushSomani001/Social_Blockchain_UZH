@@ -23,7 +23,7 @@ interface GrantInfo extends SerializableValueObject {
 }
 
 // Government Contract
-export class Government extends SmartContract {
+export class Governing extends SmartContract {
   
   // Accounts: mapping from account address to account information
   private grants = MapStorage.for<Address, GrantInfo>();
