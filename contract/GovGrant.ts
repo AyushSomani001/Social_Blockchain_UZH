@@ -17,8 +17,9 @@ const token = LinkedSmartContract.for<Token>();
 
 // Account Data Type
 interface GrantInfo extends SerializableValueObject {
-  readonly message: string;
-  readonly balance: Fixed<8>;
+  message: string;
+  group: string;
+  balance: Fixed<8>;
 }
 
 // Government Contract
@@ -41,7 +42,7 @@ export class Government extends SmartContract {
     const account = this.grants.get(address);
 
     return (account === undefined)
-      ? { message: 'Address is not set up', balance: -1 }
+      ? { message: 'Address is not set up', 'none', balance: -1 }
       : account;
   }
 
@@ -64,13 +65,13 @@ export class Government extends SmartContract {
   }
 
   // Register to receive funds
-  public setupContributions(address: Address): void {
+  public setupContributions(address: Address, group: string): void {
     const account = this.grants.get(address);
     if (account !== undefined) {
       throw new Error(`This address is already setup to track contributions.`);
     }
 
-    this.grants.set(address, { message: '', balance: 0 });
+    this.grants.set(address, { message: '', , group, balance: 0 });
   }
 
   // Send funds to government
@@ -106,16 +107,13 @@ export class Government extends SmartContract {
 
   // Send funds to account
   private contribute(to: Address, amount: Fixed<8>): boolean {
-    const balances = this.grants.get(to);
+    const account = this.grants.get(to);
 
-    if (balances === undefined) {
+    if (account === undefined) {
       throw new Error(`That address hasn't been setup to receive contributions yet.`);
     }
 
-    this.grants.set(to, {
-      message: grants.message,
-      balance: grants.balance + amount,
-    });
+    this.grants.set(to, { ...account, balance = account.balance + amount });
 
     return true;
   }
