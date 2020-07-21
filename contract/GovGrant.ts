@@ -26,7 +26,9 @@ interface GrantInfo extends SerializableValueObject {
 export class Government extends SmartContract {
   
   // Accounts: mapping from account address to account information
-  private readonly grants = MapStorage.for<Address, GrantInfo>();
+  private grants = MapStorage.for<Address, GrantInfo>();
+  private acc = {"", "", 0}; 
+  private count = 0; 
 
   // Constructor, only run at deployment
   public constructor(public readonly owner: Address = Deploy.senderAddress) {
@@ -46,6 +48,27 @@ export class Government extends SmartContract {
       : account;
   }
 
+  // Send funds to specific group, equally distribute funds
+  // Can be optimized (double for loop)
+  public fundGroup(address: Address, group: string, amount: Fixed<8>): void {
+    count = 0;
+    // Count receivers
+    for (let addr in grants) {
+      acc = this.grants.get(addr);
+      if (acc.group === group) {
+        count += 1;
+      }
+    }
+    if (count !== 0) {
+      for (let addr in grants) {
+        acc = this.grants.get(addr);
+        if (acc.group === group) {
+          acc.balance += amount/count;
+        }
+      }
+    }
+  }
+  
   // Send funds
   public approveReceiveTransfer(
     from: Address,
@@ -60,7 +83,7 @@ export class Government extends SmartContract {
   }
 
   // If funds don't go through
-  public onRevokeSendTransfer(from: Address, to: Address, amount: Fixed<0>) {
+  public onRevokeSendTransfer(from: Address, to: Address, amount: Fixed<0>): void {
     // do nothing
   }
 
