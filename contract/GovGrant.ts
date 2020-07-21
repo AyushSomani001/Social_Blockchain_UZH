@@ -13,11 +13,9 @@ import { Token } from './Token';
 
 const token = LinkedSmartContract.for<Token>();
 
-//TODO Grant info without current Balance
 interface DonationInfo extends SerializableValueObject {
   readonly message: string;
   readonly balance: Fixed<8>;
-  readonly currentBalance: Fixed<8>;
 }
 
 export class GovGrant extends SmartContract {
@@ -36,7 +34,7 @@ export class GovGrant extends SmartContract {
     const info = this.donations.get(source);
 
     return info === undefined
-      ? { message: 'Address is not set up', balance: -1, currentBalance: -1 }
+      ? { message: 'Address is not set up', balance: -1 }
       : info;
   }
 
@@ -64,7 +62,7 @@ export class GovGrant extends SmartContract {
       throw new Error(`This address is already setup to track contributions.`);
     }
 
-    this.donations.set(address, { message: '', balance: 0, currentBalance: 0});
+    this.donations.set(address, { message: '', balance: 0 });
   }
 
   // Government collects the token based on the public transport far the citizen redeems.
@@ -77,7 +75,7 @@ export class GovGrant extends SmartContract {
       
       const confirmation = token.transfer(this.address, address, _amount);
       if (confirmation) {
-        this.donations.set(address, { ...account, currentBalance: account.currentBalance - _amount });
+        this.donations.set(address, { ...account, balance = account.balance - _amount });
       }
 
       return confirmation;
@@ -107,7 +105,6 @@ export class GovGrant extends SmartContract {
     this.donations.set(to, {
       message: balances.message,
       balance: balances.balance + amount,
-      currentBalance: balances.currentBalance + amount,
     });
 
     return true;
