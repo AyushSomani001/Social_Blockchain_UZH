@@ -84,13 +84,16 @@ export class GovGrant extends SmartContract {
     this.donations.set(address, { message: '', balance: 0, currentBalance: 0});
   }
 
-  // TODO Add amount to args to only collect the bus fare.
-  public collect(address: Address): boolean {
+  //Goverment collects the token based on the public transport far the citizen redeems.
+  public collect(address: Address, _amount: Fixed<0>): boolean {
     const account = this.donations.get(address);
+    if (account.balance < _amount) {
+      throw new Error(`There isn't enough balance in the account.`);
+    }
     if (Address.isCaller(address) && account !== undefined) {
-      const confirmation = token.transfer(this.address, address, account.currentBalance);
+      const confirmation = token.transfer(this.address, address, _amount);
       if (confirmation) {
-        this.donations.set(address, { ...account, currentBalance: 0 });
+        this.donations.set(address, { ...account, currentBalance: account.currentBalance - _amount });
       }
 
       return confirmation;
