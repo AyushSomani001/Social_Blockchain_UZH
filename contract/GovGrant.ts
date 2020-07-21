@@ -22,7 +22,7 @@ interface DonationInfo extends SerializableValueObject {
 }
 
 // Government Contract
-export class GovGrant extends SmartContract {
+export class Government extends SmartContract {
   // Accounts: mapping from account address to account information
   private readonly donations = MapStorage.for<Address, DonationInfo>();
 
@@ -36,21 +36,21 @@ export class GovGrant extends SmartContract {
 
   // Get account information
   @constant
-  public getDonationInfo(source: Address): DonationInfo {
-    const info = this.donations.get(source);
+  public getDonationInfo(address: Address): DonationInfo {
+    const account = this.donations.get(address);
 
-    return info === undefined
+    return (account === undefined)
       ? { message: 'Address is not set up', balance: -1 }
-      : info;
+      : account;
   }
 
   // Send funds
   public approveReceiveTransfer(
-    amount: Fixed<8>,
-    asset: Address,
+    from: Address,
     to: ForwardedValue<Address>,
+    amount: Fixed<8>
   ): boolean {
-    if (!Address.isCaller(asset)) {
+    if (!Address.isCaller(from)) {
       return false;
     }
 
@@ -58,14 +58,14 @@ export class GovGrant extends SmartContract {
   }
 
   // If funds don't go through
-  public onRevokeSendTransfer(_from: Address, _amount: Fixed<0>, _asset: Address) {
+  public onRevokeSendTransfer(from: Address, to: Address, amount: Fixed<0>) {
     // do nothing
   }
 
   // Register to receive funds
   public setupContributions(address: Address): void {
-    const info = this.donations.get(address);
-    if (info !== undefined) {
+    const account = this.donations.get(address);
+    if (account !== undefined) {
       throw new Error(`This address is already setup to track contributions.`);
     }
 
@@ -73,16 +73,16 @@ export class GovGrant extends SmartContract {
   }
 
   // Send funds to government
-  public collect(address: Address, _amount: Fixed<0>): boolean {
+  public govCollect(to: Address, amount: Fixed<0>): boolean {
     const account = this.donations.get(address);
     if (Address.isCaller(address) && account !== undefined) {
-      if (account.balance < _amount) {
+      if (account.balance < amount) {
         throw new Error(`There isn't enough balance in the account.`);
       }
       
-      const confirmation = token.transfer(this.address, address, _amount);
+      const confirmation = token.transfer(this.address, address, amount);
       if (confirmation) {
-        this.donations.set(address, { ...account, balance = account.balance - _amount });
+        this.donations.set(address, { ...account, balance = account.balance - amount });
       }
 
       return confirmation;
