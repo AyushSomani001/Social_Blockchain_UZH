@@ -13,13 +13,13 @@ import { Token } from './Token';
 
 const token = LinkedSmartContract.for<Token>();
 
-
-// TODO: Rename this to our use case like Grants and Donations something. Don't wanna change too much else it might break.
+//TODO Not needed
 interface ContributionInfo extends SerializableValueObject {
   readonly amount: Fixed<8>;
   readonly message: string;
 }
 
+//TODO Grant info without current Balance
 interface DonationInfo extends SerializableValueObject {
   readonly message: string;
   readonly balance: Fixed<8>;
@@ -84,6 +84,7 @@ export class GovGrant extends SmartContract {
     this.donations.set(address, { message: '', balance: 0, currentBalance: 0});
   }
 
+  // TODO Add amount to args to only collect the bus fare.
   public collect(address: Address): boolean {
     const account = this.donations.get(address);
     if (Address.isCaller(address) && account !== undefined) {
