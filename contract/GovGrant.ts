@@ -1,3 +1,4 @@
+// Dependencies
 import {
   Address,
   constant,
@@ -9,18 +10,23 @@ import {
   SerializableValueObject,
   SmartContract,
 } from '@neo-one/smart-contract';
-import { Token } from './Token';
 
+// Token contract
+import { Token } from './Token';
 const token = LinkedSmartContract.for<Token>();
 
+// Account Data Type
 interface DonationInfo extends SerializableValueObject {
   readonly message: string;
   readonly balance: Fixed<8>;
 }
 
+// Government Contract
 export class GovGrant extends SmartContract {
-  private readonly donations = MapStorage.for<Address /*receiver*/, DonationInfo>();
+  // Accounts: mapping from account address to account information
+  private readonly donations = MapStorage.for<Address, DonationInfo>();
 
+  // Constructor, only run at deployment
   public constructor(public readonly owner: Address = Deploy.senderAddress) {
     super();
     if (!Address.isCaller(owner)) {
@@ -28,7 +34,7 @@ export class GovGrant extends SmartContract {
     }
   }
 
-  // Meta Donation Info Getter
+  // Get account information
   @constant
   public getDonationInfo(source: Address): DonationInfo {
     const info = this.donations.get(source);
@@ -38,7 +44,7 @@ export class GovGrant extends SmartContract {
       : info;
   }
 
-  // One interface functions
+  // Send funds
   public approveReceiveTransfer(
     amount: Fixed<8>,
     asset: Address,
@@ -51,11 +57,12 @@ export class GovGrant extends SmartContract {
     return this.contribute(to, amount);
   }
 
+  // If funds don't go through
   public onRevokeSendTransfer(_from: Address, _amount: Fixed<0>, _asset: Address) {
     // do nothing
   }
 
-  // add your address to allow contributions to be tracked (global donation message optional)
+  // Register to receive funds
   public setupContributions(address: Address): void {
     const info = this.donations.get(address);
     if (info !== undefined) {
@@ -65,7 +72,7 @@ export class GovGrant extends SmartContract {
     this.donations.set(address, { message: '', balance: 0 });
   }
 
-  // Government collects the token based on the public transport far the citizen redeems.
+  // Send funds to government
   public collect(address: Address, _amount: Fixed<0>): boolean {
     const account = this.donations.get(address);
     if (Address.isCaller(address) && account !== undefined) {
@@ -84,6 +91,7 @@ export class GovGrant extends SmartContract {
     return false;
   }
 
+  // Update an account's message
   public updateMessage(address: Address, message: string): boolean {
     const account = this.donations.get(address);
     if (account !== undefined && Address.isCaller(address)) {
@@ -95,6 +103,7 @@ export class GovGrant extends SmartContract {
     return false;
   }
 
+  // Send funds to account
   private contribute(to: Address, amount: Fixed<8>): boolean {
     const balances = this.donations.get(to);
 
