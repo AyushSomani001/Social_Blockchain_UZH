@@ -1,10 +1,16 @@
 import {
-  Address, Blockchain,
+  Address,
+  Blockchain,
   constant,
+  Contract,
   createEventNotifier,
   Deploy,
-  Fixed, Hash256, Integer,
-  MapStorage, receive,
+  Fixed,
+  ForwardValue,
+  Hash256,
+  Integer,
+  MapStorage,
+  receive,
   SmartContract,
 } from '@neo-one/smart-contract';
 
@@ -15,22 +21,40 @@ const notifyTransfer = createEventNotifier<Address | undefined, Address | undefi
   'amount',
 );
 
+interface TokenPayableContract {
+  readonly approveReceiveTransfer: (
+    from: Address,
+    amount: Fixed<8>,
+    asset: Address,
+    // tslint:disable-next-line readonly-array
+    ...args: ForwardValue[]
+  ) => boolean;
+  readonly onRevokeSendTransfer: (from: Address, amount: Fixed<8>, asset: Address) => void;
+}
+
 export class Token extends SmartContract {
-  public readonly name = 'Eon';
-  public readonly symbol = 'EON';
+  public readonly properties = {
+    codeVersion: '1.0',
+    author: 'dicarlo2',
+    email: 'alex.dicarlo@neotracker.io',
+    description: 'NEO•ONE ICO',
+  };
+  public readonly name = 'One';
+  public readonly symbol = 'ONE';
   public readonly decimals = 8;
+  public readonly amountPerNEO = 100_000;
   private readonly balances = MapStorage.for<Address, Fixed<8>>();
-  private mutableSupply: Fixed<8> = 0;
   private mutableRemaining: Fixed<8> = 10_000_000_000_00000000;
+  private mutableSupply: Fixed<8> = 0;
 
   public constructor(
     public readonly owner: Address = Deploy.senderAddress,
     public readonly icoStartTimeSeconds: Integer = Blockchain.currentBlockTime + 60 * 60,
     public readonly icoDurationSeconds: Integer = 86400,
-    ) {
+  ) {
     super();
     if (!Address.isCaller(owner)) {
-      throw new Error('Sender is not the owner.');
+      throw new Error(`Sender was not the owner. Received: ${owner}`);
     }
   }
 
@@ -46,18 +70,23 @@ export class Token extends SmartContract {
     return balance === undefined ? 0 : balance;
   }
 
-  public transfer(from: Address, to: Address, amount: Fixed<8>): true {
+  // tslint:disable-next-line readonly-array
+  public transfer(from: Address, to: Address, amount: Fixed<8>, ...approveArgs: ForwardValue[]): boolean {
     if (amount < 0) {
-      throw new Error(`Amount must be greater than 0: ${amount}`);
-    }
-
-    if (!Address.isCaller(from)) {
-      throw new Error('The from Address did not approve the operation.');
+      throw new Error(`Amount must be greater than 0: Received: ${amount}`);
     }
 
     const fromBalance = this.balanceOf(from);
     if (fromBalance < amount) {
-      throw new Error('The from balance is insufficient.');
+      throw new Error('Cannot send amount greater than current address balance');
+    }
+
+    const contract = Contract.for(to);
+    if (contract !== undefined && !Address.isCaller(to)) {
+      const smartContract = SmartContract.for<TokenPayableContract>(to);
+      if (!smartContract.approveReceiveTransfer(from, amount, this.address, ...approveArgs)) {
+        throw new Error('Transfer receive was not approved');
+      }
     }
 
     const toBalance = this.balanceOf(to);
@@ -66,6 +95,11 @@ export class Token extends SmartContract {
     notifyTransfer(from, to, amount);
 
     return true;
+  }
+
+  @constant
+  public get remaining(): Fixed<8> {
+    return this.mutableRemaining;
   }
 
   @receive
@@ -91,7 +125,7 @@ export class Token extends SmartContract {
           throw new Error('Expecting only NEO to be sent to the contact');
         }
 
-        amount += output.value;
+        amount += output.value * this.amountPerNEO;
       }
     }
 
@@ -109,11 +143,6 @@ export class Token extends SmartContract {
     this.balances.set(addr, this.balanceOf(addr) + amount);
     this.mutableSupply += amount;
     notifyTransfer(undefined, addr, amount);
-  }
-
-  @constant
-  public get remaining(): Fixed<8> {
-    return this.mutableRemaining;
   }
 
   private hasStarted(): boolean {
