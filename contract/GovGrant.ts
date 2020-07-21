@@ -16,15 +16,16 @@ import { Token } from './Token';
 const token = LinkedSmartContract.for<Token>();
 
 // Account Data Type
-interface DonationInfo extends SerializableValueObject {
+interface GrantInfo extends SerializableValueObject {
   readonly message: string;
   readonly balance: Fixed<8>;
 }
 
 // Government Contract
 export class Government extends SmartContract {
+  
   // Accounts: mapping from account address to account information
-  private readonly donations = MapStorage.for<Address, DonationInfo>();
+  private readonly grants = MapStorage.for<Address, GrantInfo>();
 
   // Constructor, only run at deployment
   public constructor(public readonly owner: Address = Deploy.senderAddress) {
@@ -36,8 +37,8 @@ export class Government extends SmartContract {
 
   // Get account information
   @constant
-  public getDonationInfo(address: Address): DonationInfo {
-    const account = this.donations.get(address);
+  public getGrantInfo(address: Address): GrantInfo {
+    const account = this.grants.get(address);
 
     return (account === undefined)
       ? { message: 'Address is not set up', balance: -1 }
@@ -64,17 +65,17 @@ export class Government extends SmartContract {
 
   // Register to receive funds
   public setupContributions(address: Address): void {
-    const account = this.donations.get(address);
+    const account = this.grants.get(address);
     if (account !== undefined) {
       throw new Error(`This address is already setup to track contributions.`);
     }
 
-    this.donations.set(address, { message: '', balance: 0 });
+    this.grants.set(address, { message: '', balance: 0 });
   }
 
   // Send funds to government
   public govCollect(to: Address, amount: Fixed<0>): boolean {
-    const account = this.donations.get(address);
+    const account = this.grants.get(address);
     if (Address.isCaller(address) && account !== undefined) {
       if (account.balance < amount) {
         throw new Error(`There isn't enough balance in the account.`);
@@ -82,7 +83,7 @@ export class Government extends SmartContract {
       
       const confirmation = token.transfer(this.address, address, amount);
       if (confirmation) {
-        this.donations.set(address, { ...account, balance = account.balance - amount });
+        this.grants.set(address, { ...account, balance = account.balance - amount });
       }
 
       return confirmation;
@@ -93,9 +94,9 @@ export class Government extends SmartContract {
 
   // Update an account's message
   public updateMessage(address: Address, message: string): boolean {
-    const account = this.donations.get(address);
+    const account = this.grants.get(address);
     if (account !== undefined && Address.isCaller(address)) {
-      this.donations.set(address, { ...account, message });
+      this.grants.set(address, { ...account, message });
 
       return true;
     }
@@ -105,15 +106,15 @@ export class Government extends SmartContract {
 
   // Send funds to account
   private contribute(to: Address, amount: Fixed<8>): boolean {
-    const balances = this.donations.get(to);
+    const balances = this.grants.get(to);
 
     if (balances === undefined) {
       throw new Error(`That address hasn't been setup to receive contributions yet.`);
     }
 
-    this.donations.set(to, {
-      message: balances.message,
-      balance: balances.balance + amount,
+    this.grants.set(to, {
+      message: grants.message,
+      balance: grants.balance + amount,
     });
 
     return true;
