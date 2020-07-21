@@ -63,7 +63,7 @@ export class Government extends SmartContract {
       for (let addr in grants) {
         acc = this.grants.get(addr);
         if (acc.group === group) {
-          acc.balance += amount/count;
+          approveReceiveTransfer(address, addr, amount/count);
         }
       }
     }
@@ -91,7 +91,7 @@ export class Government extends SmartContract {
   public setupContributions(address: Address, group: string): void {
     const account = this.grants.get(address);
     if (account !== undefined) {
-      throw new Error(`This address is already setup to track contributions.`);
+      throw new Error(`Address already exists.`);
     }
 
     this.grants.set(address, { message: '', , group, balance: 0 });
@@ -133,7 +133,7 @@ export class Government extends SmartContract {
     const account = this.grants.get(to);
 
     if (account === undefined) {
-      throw new Error(`That address hasn't been setup to receive contributions yet.`);
+      throw new Error(`Invalid address.`);
     }
 
     this.grants.set(to, { ...account, balance = account.balance + amount });
