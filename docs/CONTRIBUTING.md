@@ -1,6 +1,6 @@
-> Subject: "Deep Dive into Blockchain" <br>
-> Professor Claudio Tessone
-> Assignment: Final Project
-> Author: Ayush Somani
-> Group 4: Oliver Müller, Frederik Glitzner, Kharitonova Nadezhda, Martin Zbudila, Ayush Somani.
+> Subject: **"Deep Dive into Blockchain"** <br>
+> Professor **Prof. Claudio Tessone** <br>
+> Assignment: **Final Project** <br>
+> Author: **Ayush Somani** <br>
+> Group 4: **Oliver Müller, Frederik Glitzner, Kharitonova Nadezhda, Martin Zbudila, Ayush Somani** <br>
 > Date: July 24,2020
