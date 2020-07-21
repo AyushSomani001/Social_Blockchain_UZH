@@ -1,3 +1,4 @@
+// Dependencies
 import {
   Address,
   constant,
@@ -9,20 +10,27 @@ import {
   SerializableValueObject,
   SmartContract,
 } from '@neo-one/smart-contract';
-import { Token } from './Token';
 
+// Token contract
+import { Token } from './Token';
 const token = LinkedSmartContract.for<Token>();
 
-//TODO Grant info without current Balance
-interface DonationInfo extends SerializableValueObject {
-  readonly message: string;
-  readonly balance: Fixed<8>;
-  readonly currentBalance: Fixed<8>;
+// Account Data Type
+interface GrantInfo extends SerializableValueObject {
+  message: string;
+  group: string;
+  balance: Fixed<8>;
 }
 
-export class GovGrant extends SmartContract {
-  private readonly donations = MapStorage.for<Address /*receiver*/, DonationInfo>();
+// Government Contract
+export class Governing extends SmartContract {
+  
+  // Accounts: mapping from account address to account information
+  private grants = MapStorage.for<Address, GrantInfo>();
+  private acc = {"", "", 0}; 
+  private count = 0; 
 
+  // Constructor, only run at deployment
   public constructor(public readonly owner: Address = Deploy.senderAddress) {
     super();
     if (!Address.isCaller(owner)) {
@@ -30,54 +38,77 @@ export class GovGrant extends SmartContract {
     }
   }
 
-  // Meta Donation Info Getter
+  // Get account information
   @constant
-  public getDonationInfo(source: Address): DonationInfo {
-    const info = this.donations.get(source);
+  public getGrantInfo(address: Address): GrantInfo {
+    const account = this.grants.get(address);
 
-    return info === undefined
-      ? { message: 'Address is not set up', balance: -1, currentBalance: -1 }
-      : info;
+    return (account === undefined)
+      ? { message: 'Address is not set up', 'none', balance: -1 }
+      : account;
   }
 
-  // One interface functions
+  // Send funds to specific group, equally distribute funds
+  // Can be optimized (double for loop)
+  public fundGroup(address: Address, group: string, amount: Fixed<8>): void {
+    count = 0;
+    // Count receivers
+    for (let addr in grants) {
+      acc = this.grants.get(addr);
+      if (acc.group === group) {
+        count += 1;
+      }
+    }
+    if (count !== 0) {
+      for (let addr in grants) {
+        acc = this.grants.get(addr);
+        if (acc.group === group) {
+          approveReceiveTransfer(address, addr, amount/count);
+        }
+      }
+    }
+  }
+  
+  // Send funds
   public approveReceiveTransfer(
-    amount: Fixed<8>,
-    asset: Address,
+    from: Address,
     to: ForwardedValue<Address>,
+    amount: Fixed<8>
   ): boolean {
-    if (!Address.isCaller(asset)) {
+    if (!Address.isCaller(from)) {
       return false;
     }
 
     return this.contribute(to, amount);
   }
 
-  public onRevokeSendTransfer(_from: Address, _amount: Fixed<0>, _asset: Address) {
+  // If funds don't go through
+  public onRevokeSendTransfer(from: Address, to: Address, amount: Fixed<0>): void {
     // do nothing
   }
 
-  // add your address to allow contributions to be tracked (global donation message optional)
-  public setupContributions(address: Address): void {
-    const info = this.donations.get(address);
-    if (info !== undefined) {
-      throw new Error(`This address is already setup to track contributions.`);
+  // Register to receive funds
+  public setupContributions(address: Address, group: string): void {
+    const account = this.grants.get(address);
+    if (account !== undefined) {
+      throw new Error(`Address already exists.`);
     }
 
-    this.donations.set(address, { message: '', balance: 0, currentBalance: 0});
+    this.grants.set(address, { message: '', , group, balance: 0 });
   }
 
-  // Government collects the token based on the public transport far the citizen redeems.
-  public collect(address: Address, _amount: Fixed<0>): boolean {
-    const account = this.donations.get(address);
-    if (Address.isCaller(address) && account !== undefined) {
-      if (account.balance < _amount) {
+  // Send funds to government
+  public govCollect(from: Address, amount: Fixed<0>): boolean {
+    const account = this.grants.get(from);
+    if (Address.isCaller(from) && account !== undefined) {
+      if (account.balance < amount) {
         throw new Error(`There isn't enough balance in the account.`);
       }
       
-      const confirmation = token.transfer(this.address, address, _amount);
+      // Check necessity!
+      const confirmation = token.transfer(from, this.address, amount);
       if (confirmation) {
-        this.donations.set(address, { ...account, currentBalance: account.currentBalance - _amount });
+        this.grants.set(address, { ...account, balance = account.balance - amount });
       }
 
       return confirmation;
@@ -86,10 +117,11 @@ export class GovGrant extends SmartContract {
     return false;
   }
 
+  // Update an account's message
   public updateMessage(address: Address, message: string): boolean {
-    const account = this.donations.get(address);
+    const account = this.grants.get(address);
     if (account !== undefined && Address.isCaller(address)) {
-      this.donations.set(address, { ...account, message });
+      this.grants.set(address, { ...account, message });
 
       return true;
     }
@@ -97,18 +129,15 @@ export class GovGrant extends SmartContract {
     return false;
   }
 
+  // Send funds to account
   private contribute(to: Address, amount: Fixed<8>): boolean {
-    const balances = this.donations.get(to);
+    const account = this.grants.get(to);
 
-    if (balances === undefined) {
-      throw new Error(`That address hasn't been setup to receive contributions yet.`);
+    if (account === undefined) {
+      throw new Error(`Invalid address.`);
     }
 
-    this.donations.set(to, {
-      message: balances.message,
-      balance: balances.balance + amount,
-      currentBalance: balances.currentBalance + amount,
-    });
+    this.grants.set(to, { ...account, balance = account.balance + amount });
 
     return true;
   }
