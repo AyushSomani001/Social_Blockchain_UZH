@@ -4,7 +4,7 @@
 > Subject: &nbsp;  &emsp; &emsp; **"Deep Dive into Blockchain"** <br>
 > Professor:&emsp; &emsp; **Prof. Claudio Tessone** <br>
 > Assignment: &emsp; **Final Project** <br>
-> Authors: &ensp; &ensp; &emsp; **Ayush Somani, Frederik Glitzner, Kharitonova Nadezhda, Martin Zbudila, Oliver Mülle** <br>
+> Authors: &ensp; &ensp; &emsp; **Ayush Somani, Frederik Glitzner, Kharitonova Nadezhda, Martin Zbudila, Oliver Müller** <br>
 > Date: &ensp; &ensp; &emsp; &emsp; &nbsp;July 22,2020  <br>
 
 [AUTHOR CONTRIBUTIONS](docs/Authorship.md) <br>
