@@ -84,7 +84,7 @@ export class Governing extends SmartContract {
   }
 
   // Register to receive funds
-  public setupContributions(address: Address, group: string): void {
+  public setupGrantRecievers(address: Address, group: string): void {
     const account = this.grants.get(address);
     if (account !== undefined) {
       throw new Error(`Address already exists.`);
