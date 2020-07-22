@@ -4,13 +4,10 @@
 > Subject: &nbsp;  &emsp; &emsp; **"Deep Dive into Blockchain"** <br>
 > Professor:&emsp; &emsp; **Prof. Claudio Tessone** <br>
 > Assignment: &emsp; **Final Project** <br>
-> Author: &nbsp; &nbsp; &emsp; &emsp;**Ayush Somani, Frederik Glitzner** <br>
-> Group 4: &ensp; &ensp; &emsp; **Oliver Müller, Frederik Glitzner, Kharitonova Nadezhda, Martin Zbudila, Ayush Somani** <br>
+> Authors: &ensp; &ensp; &emsp; **Ayush Somani, Frederik Glitzner, Kharitonova Nadezhda, Martin Zbudila, Oliver Mülle** <br>
 > Date: &ensp; &ensp; &emsp; &emsp; &nbsp;July 22,2020  <br>
 
-[Contribution guidelines for this project](docs/CONTRIBUTING.md) <br>
-
-
+[AUTHOR CONTRIBUTIONS](docs/Authorship.md) <br>
 
 <b> Developing an Incentivised Social Media Platform with NEO Dapp using TypeScript</b> <br>
 <img src='docs/Schema Diagram.jpg' align="center" width=800> <br>
@@ -22,3 +19,6 @@ A social platform to incentivize more people contribute to society by introducin
 - We aim to create the token on the NEO ONE platform and develop a smart contract for bike sharing as an example of application.
 
 [Implementation of the Idea](docs/Implementation.md)
+
+[Challenges faced during this project](docs/CONTRIBUTING.md) <br>
+
