@@ -2,8 +2,8 @@
 > Subject: &nbsp;  &emsp; &emsp; **"Deep Dive into Blockchain"** <br>
 > Professor:&emsp; &emsp; **Prof. Claudio Tessone** <br>
 > Assignment: &emsp; **Final Project** <br>
-> Author: &nbsp; &nbsp; &emsp; &emsp;**Ayush Somani** <br>
-> Group 4: &ensp; &ensp; &emsp; **Ayush Somani, Frederik Glitzner, Kharitonova Nadezhda, Martin Zbudila, Oliver Müller** <br>
+> Author: &nbsp; &nbsp; &emsp; &emsp;**Ayush Somani, Frederik Glitzner** <br>
+> Group 4: &ensp; &ensp; &emsp; **Ayush Somani, Kharitonova Nadezhda, Martin Zbudila, Oliver Müller** <br>
 > Date: &ensp; &ensp; &emsp; &emsp; &nbsp;July 22,2020  <br>
 
 > GitHub: https://github.com/AyushSomani001/Social_Blockchain_UZH/tree/master/contract*   <br>
