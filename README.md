@@ -1,4 +1,4 @@
-# Incentivised Social Activity Token
+# Incentivised Social Welfare Coin
 ### University UZH - Universität Zürich, Switzerland
 
 > Subject: &nbsp;  &emsp; &emsp; **"Deep Dive into Blockchain"** <br>
