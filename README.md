@@ -10,7 +10,11 @@
 [AUTHOR CONTRIBUTIONS](docs/Authorship.md) <br>
 
 <b> Developing an Incentivised Social Media Platform with NEO Dapp using TypeScript</b> <br>
-<img src='docs/Schema Diagram.jpg' align="center" width=800> <br>
+<figure>
+  <img src='docs/Schema Diagram.jpg' align="center"/> 
+  <figcaption> <b> Fig 1: Flowchart for the SWC Token Exchange System </b> </figcaption>
+</figure>
+
 A social platform to incentivize more people contribute to society by introducing a tokenized economy of benefits.  <br>
 - This is an example of a Social Token, an Incentivized Social Activity Token termed as **SWC** (Social Welfare Coin) <br>
 - The Token is non-fungible (ERC721)<br>
