@@ -117,7 +117,7 @@ export class Governing extends SmartContract {
   public updateMessage(address: Address, message: string): boolean {
     const account = this.grants.get(address);
     if (account !== undefined && Address.isCaller(address)) {
-      this.grants.set(address, { ...account, message });
+      this.grants.set(address, { ...account, message: message });
 
       return true;
     }
