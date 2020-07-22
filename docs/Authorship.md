@@ -1,0 +1,2 @@
+### AUTHOR CONTRIBUTIONS
+All authors conceived and designed the project idea. Nadezhda Kharitonova and Martin Zbudila developed and wrote the business model. Oliver Müller worked on the regulatory implications.  Ayush Somani and Frederik Glitzner developed the technical implementation, evaluated the platforms and wrote the section about technical aspects of NEO. All authors revised and accepted the final version of this document. We grant Prof. Dr. Claudio J. Tessone the right to share a screenshot of our work in the social media channels of the UZH Blockchain Center.
