@@ -17,7 +17,7 @@ const token = LinkedSmartContract.for<Token>();
 
 
 // Transfer Funds from peer to peer
-export class p2p_transfer extends SmartContract {
+export class P2P_Transfer extends SmartContract {
 
   // Constructor, only run at deployment
   public constructor(public readonly owner: Address = Deploy.senderAddress) {
