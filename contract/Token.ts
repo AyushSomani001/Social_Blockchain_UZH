@@ -33,8 +33,8 @@ interface TokenPayableContract {
 }
 
 export class Token extends SmartContract {
-  public readonly name = 'One';
-  public readonly symbol = 'ONE';
+  public readonly name = 'SWC';                       //SWC stand for "Social Welfare Coin"
+  public readonly symbol = 'SWC';
   public readonly decimals = 8;
   public readonly amountPerNEO = 100_000;
   private readonly balances = MapStorage.for<Address, Fixed<8>>();
