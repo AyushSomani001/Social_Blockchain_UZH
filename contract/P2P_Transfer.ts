@@ -2,12 +2,8 @@
 import {
   Address,
   constant,
-  Deploy,
   Fixed,
-  ForwardedValue,
   LinkedSmartContract,
-  MapStorage,
-  SerializableValueObject,
   SmartContract,
 } from '@neo-one/smart-contract';
 
@@ -19,16 +15,8 @@ const token = LinkedSmartContract.for<Token>();
 // Transfer Funds from peer to peer
 export class P2P_Transfer extends SmartContract {
 
-  // Constructor, only run at deployment
-  public constructor(public readonly owner: Address = Deploy.senderAddress) {
-    super();
-    if (!Address.isCaller(owner)) {
-      throw new Error(`Sender was not the owner. Received: ${owner}`);
-    }
-  }
-
-  // Send funds
-  public approveReceiveTransfer(
+  // Send funds by invoking token.transfer backend
+  public peerTransfer(
     from: Address,
     to: ForwardedValue<Address>,
     amount: Fixed<8>
@@ -37,27 +25,8 @@ export class P2P_Transfer extends SmartContract {
       return false;
     }
 
-    return this.contribute(to, amount);
+    return confirmation = token.transfer(from, to, amount);
+
   }
-
-  // Send funds to government
-  public govCollect(from: Address, amount: Fixed<0>): boolean {
-    const account = this.grants.get(from);
-    if (Address.isCaller(from) && account !== undefined) {
-      if (account.balance < amount) {
-        throw new Error(`There isn't enough balance in the account.`);
-      }
-      
-      // Check necessity!
-      const confirmation = token.transfer(from, this.address, amount);
-      if (confirmation) {
-        this.grants.set(from, { ...account, balance: account.balance - amount });
-      }
-
-      return confirmation;
-    }
-
-    return false;
-  }
-
+  
 }
