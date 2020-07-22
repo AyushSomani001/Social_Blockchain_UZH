@@ -1,4 +1,4 @@
-# Incentivised Social Media Platform
+# Incentivised Social Platform
 ### University UZH - Universität Zürich, Switzerland
 
 [Contribution guidelines for this project](docs/CONTRIBUTING.md)
