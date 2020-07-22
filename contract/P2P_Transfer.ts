@@ -4,7 +4,7 @@ import {
   constant,
   Fixed,
   LinkedSmartContract,
-  SmartContract,
+  SmartContract
 } from '@neo-one/smart-contract';
 
 // Token contract
