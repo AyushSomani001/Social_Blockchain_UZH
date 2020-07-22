@@ -48,9 +48,9 @@ export class Governing extends SmartContract {
   // Send funds to specific group, equally distribute funds
   // Can be optimized (double for loop)
   public fundGroup(address: Address, group: string, amount: Fixed<8>): void {
-    var count = 0;
+    let count = 0;
     // Count receivers
-    this.grants.forEach((grantInfo: GrantInfo, addr:Address) => {
+    this.grants.forEach((grantInfo: GrantInfo) => {
       if (grantInfo.group === group) {
         count += 1;
       }
