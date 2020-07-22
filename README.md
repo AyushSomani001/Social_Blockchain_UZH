@@ -1,4 +1,4 @@
-# Incentivised Social Platform
+# Incentivised Social Activity Token
 ### University UZH - Universität Zürich, Switzerland
 
 [Contribution guidelines for this project](docs/CONTRIBUTING.md)
