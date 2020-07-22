@@ -17,9 +17,9 @@ const token = LinkedSmartContract.for<Token>();
 
 // Account Data Type
 interface GrantInfo extends SerializableValueObject {
-  message: string;
-  group: string;
-  balance: Fixed<8>;
+  readonly message: string;
+  readonly group: string;
+  readonly balance: Fixed<8>;
 }
 
 // Government Contract
