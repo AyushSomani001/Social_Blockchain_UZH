@@ -1,4 +1,3 @@
-
 > Subject: &nbsp;  &emsp; &emsp; **"Deep Dive into Blockchain"** <br>
 > Professor:&emsp; &emsp; **Prof. Claudio Tessone** <br>
 > Assignment: &emsp; **Final Project:** Group 4 <br>
